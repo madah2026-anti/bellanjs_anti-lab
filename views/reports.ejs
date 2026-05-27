@@ -1,0 +1,547 @@
+<%- include('partials/header', { title: 'التقارير' }) %>
+    <%- include('partials/rightsidbar', { page: 'reports' }) %>
+
+        <style>
+            .window-content {
+                padding: 10px;
+            }
+
+            .controls-row {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            .right-controls {
+                flex: 1;
+                display: flex;
+                gap: 5px;
+                align-items: stretch;
+            }
+
+            .left-controls {
+                flex: 1;
+                display: flex;
+                gap: 5px;
+                align-items: stretch;
+            }
+
+            .report-label {
+
+                border: 1px solid #333;
+                color: black;
+                padding: 4px 15px;
+                display: flex;
+                align-items: center;
+                font-weight: bold;
+                flex: 1;
+                justify-content: center;
+            }
+
+            .combo-box {
+                padding: 4px;
+                border: 1px solid #777;
+                width: 250px;
+                font-weight: bold;
+                font-size: 16px;
+
+            }
+
+            .search-btn {
+
+                border: 1px solid #333;
+                color: black;
+                padding: 4px 15px;
+                font-weight: bold;
+                cursor: pointer;
+                width: 80px;
+            }
+
+            .search-input {
+                flex: 1;
+                padding: 4px;
+                border: 1px solid #777;
+            }
+
+            .lists-container {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 5px;
+            }
+
+            .list-box {
+                flex: 1;
+                background-color: white;
+                border: 1px solid #777;
+                height: 350px;
+                overflow-y: auto;
+                padding: 10px;
+            }
+
+            .list-item {
+                padding: 5px;
+                cursor: pointer;
+                text-align: right;
+            }
+
+            .list-item:hover {
+                background-color: #e0f0ff;
+            }
+
+            .middle-blue-bar {
+
+                border: 1px solid #4a75a9;
+                height: 25px;
+                margin-bottom: 10px;
+                width: calc(50% - 5px);
+                /* Same width as the left list box */
+            }
+
+            .bottom-controls {
+                display: flex;
+                gap: 20px;
+                align-items: center;
+                margin-bottom: 20px;
+                margin-top: 15px;
+            }
+
+            .date-inputs {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .date-label {
+                font-weight: bold;
+                margin-left: 5px;
+            }
+
+            .date-input {
+                padding: 4px;
+                border: 1px solid #777;
+                width: 200px;
+            }
+
+            .period-combo-container {
+                flex: 1;
+                display: flex;
+                justify-content: flex-start;
+            }
+
+            .period-combo {
+                padding: 4px;
+                border: 1px solid #777;
+                width: 250px;
+            }
+
+            .action-buttons {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
+            .action-btn {
+                background: linear-gradient(to bottom, #a4c4e5, #6a96cd);
+                border: 1px solid #fff;
+                outline: 1px solid #4a75a9;
+                color: white;
+                font-weight: bold;
+                padding: 5px 25px;
+                border-radius: 4px;
+                cursor: pointer;
+                text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+            }
+
+            .action-btn:hover {
+                background: linear-gradient(to bottom, #b4d4f5, #7aa6dd);
+            }
+        </style>
+
+        <main class="main-content">
+
+
+            <div class="window-content">
+                <!-- Top Controls -->
+                <div class="controls-row">
+                    <!-- Right Controls (Categories) -->
+                    <div class="right-controls">
+                        <div class="report-label">تقارير</div>
+                        <select class="combo-box" id="category-select">
+                            <option value="suppliers">الموردين</option>
+                            <option value="customers">العملاء</option>
+                            <option value="sales">المبيعات</option>
+                            <option value="accounts">الحسابات</option>
+                            <option value="inventory">المخزون</option>
+                            <option value="purchases">خدمة العملاء </option>
+
+                        </select>
+                    </div>
+                    <!-- Left Controls (Search) -->
+                    <div class="left-controls">
+                        <div class="report-label">بحث</div>
+                        <input type="text" class="search-input" placeholder="">
+                    </div>
+                </div>
+
+                <!-- Lists -->
+                <div class="lists-container">
+                    <!-- Right List (Report Names) -->
+                    <div class="list-box" id="list-report-names">
+                    </div>
+                    <!-- Left List (Custom Data Search) and its count -->
+                    <div style="flex: 1; display: flex; flex-direction: column;">
+                        <div class="list-box" id="search-list"
+                            style="height: 310px; max-height: 310px; overflow-y: auto; width: auto; flex: none;">
+                            <!-- Custom data list will go here -->
+                        </div>
+                        <div class="middle-blue-bar" id="search-list-count"
+                            style="width: 100%; margin-top: 5px; margin-bottom: 0;"></div>
+                    </div>
+                </div>
+
+                <!-- Bottom Controls (Dates) -->
+                <div class="bottom-controls">
+                    <!-- Right part of bottom row (Dates) -->
+                    <div class="date-inputs">
+                        <span class="date-label">من تاريخ</span>
+                        <input type="date" class="date-input" id="from-date">
+                        <span class="date-label">الي تاريخ</span>
+                        <input type="date" class="date-input" id="to-date">
+                        <select class="period-combo" id="period-select">
+                            <option value="none">بدون فترة</option>
+                            <option value="prev_day">اليوم السابق</option>
+                            <option value="curr_day">اليوم الحالي</option>
+                            <option value="next_day">اليوم التالي</option>
+                            <option value="curr_month">الشهر الحالي</option>
+                            <option value="prev_month">الشهر السابق</option>
+                            <option value="q1">الربع الاول</option>
+                            <option value="q2">الربع الثاني</option>
+                            <option value="q3">الربع الثالث</option>
+                            <option value="q4">الربع الرابع</option>
+                            <option value="curr_year">العام الحالي</option>
+                            <option value="prev_year">العام السابق</option>
+
+                        </select>
+                    </div>
+
+
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="action-btn">طباعة</button>
+                    <button class="action-btn" onclick="window.history.back()">خروج</button>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            function getRptName(jj) {
+                switch (parseInt(jj, 10)) {
+
+                    // suppliers
+                    case 110: return "حساب مورد";
+                    case 120: return "حساب لجميع الموردين";
+                    case 130: return "الاصناف الواردة من المورد";
+                    case 140: return "تقييم رصيد المخزن بمتوسط سعر الشراء";
+                    //inventory
+                    case 210: return "جرد الأصناف";
+                    case 220: return "أصناف مطلوبة";
+                    case 230: return "أصناف ذات رصيد صفر";
+                    case 240: return "الارصدة السالبة";
+                    case 250: return "كرت حركة صنف";
+                    case 252: return "كرت حركة صنف للعميل";
+                    case 260: return "رصيد المخزن";
+                    case 261: return "رصيد مخزني التشغيل و التسليم";
+                    case 264: return "حركة الاصناف بمخزن مع الرصيد";
+                    case 265: return "حركة الاصناف بمخزن";
+                    case 266: return "تسوية زيادة و تخفيض بمخزن";
+                    case 267: return "تسوية زيادة و تخفيض مخزني التشغيل و التسليم";
+                    case 268: return "تسوية الزيادة و التخفيض من المورد";
+                    case 270: return "رصيد الصنف";
+                    case 280: return "تقييم رصيد المخزن";
+                    case 282: return "تقييم رصيد المخزن بسعر التكلفة";
+                    case 290: return "قطع غيار للسيارة ";
+                    // customers
+                    case 405: return " العملاء الجدد";
+                    case 415: return "حساب عميل ( مبيعات - حوافز - هدايا )";
+                    case 416: return "حساب عميل مشروعات ( مبيعات - حوافز - هدايا )";
+                    case 417: return "حساب عميل تصدير";
+                    case 420: return " حساب لجميع العملاء";
+                    case 421: return " حساب لجميع العملاء - تجاري";
+                    case 422: return " حساب لجميع العملاء - مشروعات";
+                    case 423: return " حساب لجميع العملاء - تصدير";
+                    case 425: return " حساب جميع عملاء محافظة ";
+                    case 427: return " حساب متوسط مبيعات وتحصيل عملاء محافظة ";
+                    case 430: return "حركة مسئول تسليم";
+                    case 435: return "الاصناف مع مسئول تسليم";
+                    case 436: return "خط سير السائق";
+                    case 440: return "هدايا عميل";
+                    case 450: return "حوافز عميل";
+                    case 460: return "حركة العملاء اليومية";
+                    case 461: return "حركة العملاء اليومية - تجاري";
+                    case 462: return "حركة العملاء اليومية - مشروعات";
+                    case 463: return "حركة العملاء اليومية - تصدير";
+                    case 465: return "التقرير اليومي - اجمالي ";
+                    case 466: return "التقرير اليومي - تجاري";
+                    case 467: return "التقرير اليومي - مشروعات";
+                    case 468: return "التقرير اليومي - تصدير";
+                    case 469: return "موقف البولي والصرف الابيض يوميا";
+                    case 470: return "هدايا عملاء الشركة";
+                    case 480: return "حوافز عملاء الشركة";
+                    case 490: return "العينات";
+                    case 495: return "الهدايا العينية والخيرية";
+                    //sales
+                    case 510: return "مبيعات مندوب";
+                    case 520: return "مبيعات مشرف";
+                    case 530: return "حجم مبيعات الشركة";
+                    case 540: return "مبيعات مدينة";
+                    case 550: return "مبيعات محافظة";
+                    case 551: return "متوسط مبيعات التجار";
+                    case 552: return "شرائح متوسط مبيعات التجار";
+                    case 553: return "موقف بوانص الربع سنوي والسنوي";
+                    case 554: return "موقف اجمالي بوانص الربع سنوي والسنوي محافظات";
+                    case 556: return "طلبيات العرض";
+
+                    case 560: return "حجم مبيعات صنف";
+                    case 565: return "حجم مبيعات صنف بترتيب التجار";
+
+                    case 570: return "حجم مبيعات البولي";
+                    case 572: return "حجم مبيعات الصرف الابيض";
+                    case 575: return "اجمالي المبيعات والتحصيل محافظات";
+                    case 576: return "اجمالي المبيعات والتحصيل محافظات - تجاري";
+                    case 577: return "اجمالي المبيعات والتحصيل محافظات - مشروعات";
+                    case 578: return "اجمالي المبيعات والتحصيل محافظات - تصدير";
+
+                    case 580: return "تقرير أداء مشرفي البيع";
+                    case 585: return "تقرير أداء مندوب بيع";
+                    case 590: return "حافز مناديب البيع";
+                    //accounts
+                    case 710: return " حساب لـصندوق حساب";
+                    case 712: return " ايداعات لـصندوق حساب";
+                    case 713: return " مسحوبات لـصندوق حساب";
+                    case 714: return " مصروفات لـصندوق حساب";
+                    case 715: return " سدادات الموردين من صندوق حساب";
+                    case 716: return " تحصيلات عملاء لـصندوق حساب";
+                    case 720: return " حساب لجميع صناديق الحسابات";
+                    case 730: return "حركة مركز تكلغفة";
+                    case 740: return "ميزان المراجعة";
+                    //customer service
+                    case 910: return "حجم المعاينات للفنيين";
+                    case 920: return "حجم المعاينات والكوبونات لمدينة";
+                    case 922: return "حجم المعاينات لمدينة";
+                    case 930: return "حجم المعاينات والكوبونات لمحافظة";
+                    case 935: return "الفنيين الجدد";
+                    case 936: return "الفنيين الجدد لمدينة";
+                    case 940: return "معاينات الفني";
+                    case 945: return "فنيون فى الكهف";
+                    case 946: return "فنيون فى الكهف لمدينة";
+                    case 947: return "فنيون لم يقومو بعمل معاينات";
+                    case 948: return "فنيون لم يقومو بعمل معاينات لمدينة";
+                    case 950: return "معاينات المندوب";
+                    case 953: return "معاينات اقل من 50 نقطة";
+                    case 955: return "معاينات وكوبونات تاجر";
+                    case 956: return "معاينات تاجر";
+                    case 957: return "معاينات تاجر تابع";
+                    case 960: return "اسماء الفنيين مع عدد المعاينات";
+                    case 963: return "مجمع التقرير اليومي";
+                    case 965: return "هدايا فني";
+                    case 966: return "حساب فني";
+                    case 967: return "كوبونات فني";
+                    case 968: return "المفعل من الكوبونات خلال فترة";
+                    case 970: return "المنصرف من الهدايا للفنيين";
+                    case 972: return "سريال القطع المسجلة";
+                    case 974: return "العرض الإضافي لعام 2024";
+
+                    case 982: return "عمولة مندوبي ومشرفي خدمة العملاء";
+                    case 984: return "مسابقة الفنيين الجدد لعام 2025 ";
+                    case 985: return "معاينات مشرف";
+                    case 986: return "معاينات مشرف عام";
+
+                    case 990: return "الشكاوي";
+                    case 991: return "الشكاوي - لفني";
+                    case 992: return "الشكاوي - لمحافظة";
+                    case 993: return "الشكاوي - لمدينة";
+                    case 995: return "اجمالي معينات وكوبونات الفنيين";
+                    case 996: return "تقرير أ/ ايهاب شديد ";
+
+
+                    // Add more cases here:
+                    // case 230: return "اسم التقرير";
+
+                    default: return "";
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const periodSelect = document.getElementById('period-select');
+                const fromDateInput = document.getElementById('from-date');
+                const toDateInput = document.getElementById('to-date');
+                const categorySelect = document.getElementById('category-select');
+                const reportNamesList = document.getElementById('list-report-names');
+
+                const categoryMap = {
+                    'suppliers': [110, 120, 130, 140],
+                    'inventory': [210, 220, 230, 240, 250, 252, 260, 261, 264, 265, 266, 267, 268, 270, 280, 282, 290],
+                    'customers': [405, 415, 416, 417, 420, 421, 422, 423, 425, 427, 430, 435, 436, 440, 450, 460, 461, 462, 463, 465, 466, 467, 468, 469, 470, 480, 490, 495],
+                    'sales': [510, 520, 530, 540, 550, 551, 552, 553, 554, 556, 560, 565, 570, 572, 575, 576, 577, 578, 580, 585, 590],
+                    'accounts': [710, 712, 713, 714, 715, 716, 720, 730, 740],
+                    'purchases': [910, 920, 922, 930, 935, 936, 940, 945, 946, 947, 948, 950, 953, 955, 956, 957, 960, 963, 965, 966, 967, 968, 970, 972, 974, 982, 984, 985, 986, 990, 991, 992, 993, 995, 996]
+                };
+
+                function updateReportList() {
+                    const selectedCategory = categorySelect.value;
+                    const reportIds = categoryMap[selectedCategory] || [];
+
+                    reportNamesList.innerHTML = ''; // Clear current list
+
+                    reportIds.forEach(id => {
+                        const name = getRptName(id);
+                        if (name) {
+                            const div = document.createElement('div');
+                            div.className = 'list-item';
+                            div.textContent = name;
+                            div.dataset.reportId = id; // Save the report ID for future reference
+                            reportNamesList.appendChild(div);
+                        }
+                    });
+                }
+
+                // Listen for category changes
+                categorySelect.addEventListener('change', updateReportList);
+
+                // Initialize the list on page load
+                updateReportList();
+
+                const searchList = document.getElementById('search-list');
+                const searchListCount = document.getElementById('search-list-count');
+                const searchInput = document.querySelector('.search-input');
+                let currentSearchData = [];
+
+                function renderSearchList(data) {
+                    searchList.innerHTML = '';
+                    data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'list-item';
+                        div.textContent = item.cf_t1 || 'بدون اسم';
+                        div.dataset.id = item.cf_id;
+                        searchList.appendChild(div);
+                    });
+                    searchListCount.textContent = `العدد: ${data.length}`;
+                    searchListCount.style.display = 'flex';
+                    searchListCount.style.alignItems = 'center';
+                    searchListCount.style.justifyContent = 'center';
+                    searchListCount.style.fontWeight = 'bold';
+                }
+
+                reportNamesList.addEventListener('click', function (e) {
+                    if (e.target.classList.contains('list-item')) {
+                        // Highlight selection
+                        document.querySelectorAll('#list-report-names .list-item').forEach(el => el.style.backgroundColor = '');
+                        e.target.style.backgroundColor = '#e0f0ff';
+
+                        const reportId = e.target.dataset.reportId;
+                        const category = categorySelect.value;
+
+                        // Fetch data
+                        fetch(`/api/report-data?reportId=${reportId}&category=${category}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                currentSearchData = data;
+                                renderSearchList(currentSearchData);
+                            })
+                            .catch(error => console.error('Error fetching data:', error));
+                    }
+                });
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', function (e) {
+                        const searchTerm = e.target.value.toLowerCase();
+                        if (!currentSearchData) return;
+
+                        const filteredData = currentSearchData.filter(item => {
+                            const text = item.cf_t1 ? item.cf_t1.toLowerCase() : '';
+                            return text.includes(searchTerm);
+                        });
+
+                        renderSearchList(filteredData);
+                    });
+                }
+
+                function formatDate(date) {
+
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+
+                    return `${year}-${month}-${day}`;
+                }
+
+                periodSelect.addEventListener('change', function () {
+                    const value = this.value;
+                    const today = new Date();
+                    let fromDate = new Date();
+                    let toDate = new Date();
+
+                    switch (value) {
+                        case 'none':
+                            fromDateInput.value = '';
+                            toDateInput.value = '';
+                            return;
+                        case 'prev_day':
+                            fromDate.setDate(today.getDate() - 1);
+                            toDate.setDate(today.getDate() - 1);
+                            break;
+                        case 'curr_day':
+                            fromDate = today;
+                            toDate = today;
+                            break;
+                        case 'next_day':
+                            fromDate.setDate(today.getDate() + 1);
+                            toDate.setDate(today.getDate() + 1);
+                            break;
+                        case 'curr_month':
+                            fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                            toDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                            break;
+                        case 'prev_month':
+                            fromDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                            toDate = new Date(today.getFullYear(), today.getMonth(), 0);
+                            break;
+                        case 'q1':
+                            fromDate = new Date(today.getFullYear(), 0, 1);
+                            toDate = new Date(today.getFullYear(), 3, 0);
+                            break;
+                        case 'q2':
+                            fromDate = new Date(today.getFullYear(), 3, 1);
+                            toDate = new Date(today.getFullYear(), 6, 0);
+                            break;
+                        case 'q3':
+                            fromDate = new Date(today.getFullYear(), 6, 1);
+                            toDate = new Date(today.getFullYear(), 9, 0);
+                            break;
+                        case 'q4':
+                            fromDate = new Date(today.getFullYear(), 9, 1);
+                            toDate = new Date(today.getFullYear(), 12, 0);
+                            break;
+                        case 'curr_year':
+                            fromDate = new Date(today.getFullYear(), 0, 1);
+                            toDate = new Date(today.getFullYear(), 12, 0); // Dec 31
+                            break;
+                        case 'prev_year':
+                            fromDate = new Date(today.getFullYear() - 1, 0, 1);
+                            toDate = new Date(today.getFullYear() - 1, 12, 0);
+                            break;
+                    }
+
+                    fromDateInput.value = formatDate(fromDate);
+                    toDateInput.value = formatDate(toDate);
+                });
+            });
+        </script>
+
+        <%- include('partials/footer') %>

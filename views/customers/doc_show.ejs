@@ -1,0 +1,207 @@
+<%- include('../partials/header', { title: title }) %>
+    <style>
+        @media print {
+
+            .main-sidebar,
+            .dont-print,
+            .dont-print2,
+            .print-btn-container {
+                display: none !important;
+            }
+
+            .main-content {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+
+            body {
+                background-color: white !important;
+                zoom: 0.8;
+                /* Scales down the print size by 20% */
+            }
+
+            .vendor-list-container,
+            .vendor-table,
+            .vendor-table th,
+            .vendor-table td {
+                box-shadow: none !important;
+                border: 1px solid #333 !important;
+                color: #000 !important;
+
+            }
+
+            .vendor-table th {
+                background-color: #f0f0f0 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+    <%- include('../partials/rightsidbar', { page: 'customers' }) %>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h3 style="color: #3498db;">
+                            <i class="fas fa-file-invoice"></i>
+                            <%= invoice.cash_cat_name %>
+                                <br>
+                                رقم السند : <%= invoice.cash_ser %>
+                                    <br>
+                                    تاريخ السند : <%= invoice.cash_date ? new
+                                        Date(invoice.cash_date).toISOString().split('T')[0] : 'غير مدخل' %>
+                        </h3>
+
+                    </div>
+                    <div class="print-btn-container">
+                        <button onclick="window.print()"
+                            style="background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-print"></i> طباعة (PDF)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="vendor-list-container">
+                <!-- Header Info -->
+                <div
+                    style="background: white; padding: 25px; border-radius: 15px; box-shadow: var(--light-shadow); margin-bottom: 20px;">
+                    <table class="vendor-table" style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td>
+                                <strong>اسم العميل:</strong>
+
+                                <%= invoice.cash_cv_name || 'غير مدخل' %>
+                                    <strong
+                                        style="border: 1px solid #ccc; padding: 5px; border-radius: 5px; margin-right: 10px;">
+                                        <%= invoice.cash_cv_id %>
+                                    </strong>
+                            </td>
+                            <td class="dont-print">
+                                <strong>المخزن:</strong>
+                                <%= invoice.cash_stock_name || 'غير مدخل' %>
+                                    <strong
+                                        style="border: 1px solid #ccc; padding: 5px; border-radius: 5px; margin-right: 10px;">
+                                        <%= invoice.cash_stock_id %>
+                                    </strong>
+                            </td>
+                        </tr>
+                        <tr class="dont-print2">
+                            <td>
+                                <strong>مندوب المبيعات:</strong>
+
+                                <%= invoice.cash_agent_name || 'لا يوجد' %>
+                                    <strong
+                                        style="border: 1px solid #ccc; padding: 5px; border-radius: 5px; margin-right: 10px;">
+                                        <%= invoice.cash_agent_id %>
+                                    </strong>
+
+                            </td>
+
+                            <td>
+                                <strong>مندوب التسليم:</strong>
+
+                                <%= invoice.cash_taslim_name || 'لا يوجد' %>
+                                    <strong
+                                        style="border: 1px solid #ccc; padding: 5px; border-radius: 5px; margin-right: 10px;">
+                                        <%= invoice.cash_taslim_id %>
+                                    </strong>
+
+                            </td>
+                            <td>
+                                <strong>السائق:</strong>
+                                <%= invoice.cash_driver_name || 'لا يوجد' %>
+                                    <strong
+                                        style="border: 1px solid #ccc; padding: 5px; border-radius: 5px; margin-right: 10px;">
+                                        <%= invoice.cash_driver_id %>
+                                    </strong>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>البيان:</strong>
+                                <%= invoice.cash_notes || 'لا يوجد' %>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Items Details -->
+            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: var(--light-shadow);">
+                <% if(details && details.length> 0) { %>
+                    <div style="overflow-x: auto; margin-top: 20px;">
+                        <table class="vendor-table" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>رقم الصنف</th>
+                                    <th>اسم الصنف</th>
+                                    <th>الكمية</th>
+                                    <th>السعر</th>
+                                    <th>الإجمالي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% details.forEach((item, index)=> { %>
+                                    <tr class="<%= index % 2 === 0 ? 'even' : 'odd' %>">
+                                        <td>
+                                            <%= index + 1 %>
+                                        </td>
+                                        <td>
+                                            <%= item.item_id %>
+                                        </td>
+                                        <td>
+                                            <%= item.item_name || 'غير محدد' %>
+                                        </td>
+                                        <td>
+                                            <%= item.item_qty %>
+                                        </td>
+                                        <td>
+                                            <%= item.item_price %>
+                                        </td>
+                                        <td>
+                                            <%= item.cd_tot %>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                            <tfoot>
+                                <tr style="background: #f8f9fa; font-weight: bold;">
+
+                                    <td></td>
+                                    <td></td>
+
+                                    <td style=" padding: 15px; color: #e74c3c;border-width: 1; ">
+                                        <strong>إجمالي القيمة:</strong>
+                                        <%= Number ( Number(invoice.cash_amount) +Number(invoice.cash_discount)
+                                            ).toFixed(2) %>
+                                    </td>
+                                    <td style=" padding: 15px; color: #e74c3c;">
+                                        <strong> الخصم : (<%= Number(invoice.cash_discount_percent).toFixed(0) %>
+                                                %)</strong>
+                                        <%= invoice.cash_discount || 0 %>
+                                    </td>
+                                    <td style="padding: 15px; color: #e74c3c;">
+                                        <strong>الصافي:</strong>
+                                        <%= invoice.cash_amount %>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <% } else { %>
+                        <div style="text-align: center; padding: 40px; color: #666;">
+                            <i class="fas fa-exclamation-circle fa-3x" style="color: #ddd; margin-bottom: 15px;"></i>
+                            <h3>لا توجد أصناف</h3>
+                            <p>لم يتم العثور على أي بيانات لأصناف هذا السند.</p>
+                        </div>
+                        <% } %>
+            </div>
+            </div>
+        </main>
+        <%- include('../partials/footer') %>

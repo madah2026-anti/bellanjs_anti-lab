@@ -1,0 +1,65 @@
+<%- include('partials/header', { title: 'لوحة التحكم' }) %>
+    <%- include('partials/rightsidbar', { page: 'dashboard' }) %>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <h1><i class="fas fa-home"></i> لوحة التحكم</h1>
+                <p>مرحباً بك في نظام إدارة بيلا سيتي</p>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-file-invoice fa-2x" style="color: #2ecc71;"></i>
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">الموردين</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users fa-2x" style="color: #3498db;"></i>
+                    <div class="stat-number">
+                        <%= totalcustomers %>
+                    </div>
+                    <div class="stat-label">إجمالي - العملاء</div>
+                </div>
+
+                <div class="stat-card">
+                    <i class="fas fa-money-bill-wave fa-2x" style="color: #e74c3c;"></i>
+                    <div class="stat-number">0 </div>
+                    <div class="stat-label"> ننننن </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-star fa-2x" style="color: #f39c12;"></i>
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">عملاء متميزين</div>
+                </div>
+            </div>
+
+
+
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h2><i class="fas fa-bolt"></i> إجراءات سريعة</h2>
+                <div class="actions-grid">
+                    <a href="/vendors/data/create" class="action-card">
+                        <i class="fas fa-user-plus"></i>
+                        <span>إضافة مورد جديد</span>
+                    </a>
+                    <a href="/customers" class="action-card">
+                        <i class="fas fa-user-plus"></i>
+                        <span>إضافة عميل جديد</span>
+                    </a>
+                    <a href="#" class="action-card">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>إنشاء فاتورة</span>
+                    </a>
+                    <a href="#" class="action-card">
+                        <i class="fas fa-box"></i>
+                        <span>إضافة منتج</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <%- include('partials/footer') %>

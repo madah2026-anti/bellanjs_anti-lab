@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - بيلا سيتي</title>
+
+    <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #04AA6D, #2980b9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #04AA6D, #2ECC71);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 15px rgba(4, 170, 109, 0.3);
+            border: 3px solid white;
+        }
+
+        .login-logo i {
+            font-size: 32px;
+            color: white;
+        }
+
+        .login-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .login-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #04AA6D;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(4, 170, 109, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 42px;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+
+        .form-control:focus+.input-icon {
+            color: #04AA6D;
+        }
+
+        .login-btn {
+            background: #04AA6D;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Cairo', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: #038c5a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(4, 170, 109, 0.3);
+        }
+
+        .error-message {
+            background: #fdf0ed;
+            color: #e74c3c;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border: 1px solid #fadbd8;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+        <div class="login-logo">
+            <i class="fas fa-city"></i>
+        </div>
+        <h1 class="login-title">تسجيل الدخول</h1>
+        <p class="login-subtitle">نظام إدارة بيلا سيتي للموردين والعملاء</p>
+
+        <% if (locals.error) { %>
+            <div class="error-message" style="display: block;">
+                <i class="fas fa-exclamation-circle"></i>
+                <%= error %>
+            </div>
+            <% } %>
+
+                <form action="/login" method="POST">
+                    <div class="form-group">
+                        <label for="username">اسم المستخدم</label>
+                        <input type="text" id="username" name="username" class="form-control"
+                            placeholder="أدخل اسم المستخدم" required>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">كلمة المرور</label>
+                        <input type="password" id="password" name="password" class="form-control"
+                            placeholder="أدخل كلمة المرور" required>
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+
+                    <button type="submit" class="login-btn">
+                        دخول <i class="fas fa-sign-in-alt" style="margin-right: 5px;"></i>
+                    </button>
+                </form>
+    </div>
+
+</body>
+
+</html>

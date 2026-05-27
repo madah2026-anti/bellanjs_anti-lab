@@ -1,0 +1,360 @@
+<%- include('../partials/header', { title: title }) %>
+    <%- include('../partials/rightsidbar', { page: 'customers' }) %>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-header">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h1 style="color: #3498db;">
+                            <i class="fas fa-file-invoice"></i>
+                            <%= title %>
+                        </h1>
+                    </div>
+                    <div style="display: flex; gap: 20px;">
+                        <a href="javascript:history.back()"
+                            style="background: #95a5a6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; text-decoration: none;">
+                            <i class="fas fa-arrow-right"></i> عودة للقائمة
+                        </a>
+                        <button type="button" onclick="saveInvoice()"
+                            style="background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; text-decoration: none;">
+                            <i class="fas fa-save"></i> حفظ الفاتورة
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <form id="invoiceForm" action="/customers/sales_create" method="POST">
+                <div class="vendor-list-container">
+                    <!-- Header Info -->
+                    <div
+                        style="background: white; padding: 25px; border-radius: 15px; box-shadow: var(--light-shadow); margin-bottom: 20px;">
+                        <table class="vendor-table" style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td>
+                                    <% if(title && title.includes("فاتورة")) { %>
+                                        <strong>نوع الفاتورة :</strong>
+                                        <select class="form-control select-cash-cat-name" name="cash_cat_name"
+                                            id="cash_cat_combobox" required
+                                            style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                                            <option value="مبيعات بولي" doc-cat="5" data-discount-percent="20">مبيعات
+                                                بولي</option>
+                                            <option value="مبيعات صرف" doc-cat="57" data-discount-percent="20">مبيعات
+                                                صرف</option>
+                                            <option value="مبيعات قطعية" doc-cat="55" data-discount-percent="0">مبيعات
+                                                قطعية</option>
+                                            <option value="مبيعات رمادي" doc-cat="89" data-discount-percent="20">مبيعات
+                                                رمادي</option>
+                                            <option value="مبيعات بجوان" doc-cat="111" data-discount-percent="20">مبيعات
+                                                بجوان</option>
+                                        </select>
+                                        <% } %>
+
+                                            <% if(title && title.includes("حافز")) { %>
+                                                <strong>نوع الحافز :</strong>
+                                                <select class="form-control select-cash-cat-name" name="cash_cat_name"
+                                                    id="cash_cat_combobox" required
+                                                    style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                                                    <option value="حوافز بولي" doc-cat="30">حوافز بولي</option>
+                                                    <option value="حوافز صرف" doc-cat="59">حوافز صرف</option>
+                                                    <!-- <option value="حوافز قطعية" doc-cat="999">حوافز قطعية</option>
+                                                    <option value="حوافز رمادي" doc-cat="999">حوافز رمادي</option> -->
+                                                    <option value="حوافز بجوان" doc-cat="122">حوافز بجوان</option>
+                                                </select>
+                                                <% } %>
+                                </td>
+
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>اسم العميل:</strong>
+                                    <select class="form-control select2-customer" name="cash_cv_id" id="cash_cv_id"
+                                        required
+                                        style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                                        <option value="">-- اختر العميل --</option>
+                                        <% customers.forEach((customer)=> { %>
+                                            <option value="<%= customer.cf_id %>" data-agent-id="<%= customer.cf_n1 %>">
+                                                <%= customer.cf_t1 %>
+                                            </option>
+                                            <% }); %>
+                                    </select>
+                                </td>
+                                <td>
+                                    <strong>المخزن:</strong>
+                                    <select class="form-control" name="cash_stock_id" required
+                                        style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                                        <option value="">-- اختر المخزن --</option>
+                                        <% stocks.forEach((stock)=> { %>
+                                            <option value="<%= stock.cf_id %>">
+                                                <%= stock.cf_t1 %>
+                                            </option>
+                                            <% }); %>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>مندوب المبيعات:</strong>
+                                    <select class="form-control" name="cash_agent_id" id="cash_agent_id"
+                                        style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                                        <option value="">-- اختر المندوب --</option>
+                                        <% agents.forEach((agent)=> { %>
+                                            <option value="<%= agent.cf_id %>">
+                                                <%= agent.cf_t1 %>
+                                            </option>
+                                            <% }); %>
+                                    </select>
+                                </td>
+                                <td>
+                                    <strong>تاريخ الفاتورة:</strong>
+                                    <input type="date" class="form-control" name="cash_date" required
+                                        style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;"
+                                        value="<%= new Date().toISOString().split('T')[0] %>">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>البيان:</strong>
+                                    <input type="text" class="form-control" name="cash_notes"
+                                        style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;"
+                                        placeholder="ملاحظات الفاتورة">
+                                </td>
+                                <td>
+                                    <strong>رقم السائق أو التفاصيل (اختياري):</strong>
+                                    <input type="text" class="form-control" name="cash_driver_name"
+                                        style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Items Details with Tabulator -->
+                <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: var(--light-shadow);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0; color: #2c3e50;">أصناف الفاتورة</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" onclick="addNewRow()"
+                                style="background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                                <i class="fas fa-plus"></i> إضافة صنف
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="itemsGrid" style="width: 100%;"></div>
+
+                    <div style="margin-top: 20px; text-align: left; font-size: 1.2em; font-weight: bold;">
+
+
+                        <tr style="background: #f8f9fa; font-weight: bold;">
+
+                            <td></td>
+                            <td></td>
+
+                            <td style=" padding: 15px; color: #e74c3c;border-width: 1; ">
+                                إجمالي الفاتورة: <span id="grandTotal" style="color: #e74c3c;">0.00</span>
+
+                            </td>
+                            <td style=" padding: 15px; color: #e74c3c;">
+                                <strong> الخصم : <span id="currant_discount_percent" style="color: #e74c3c;">0.00</span>
+                                    %)</strong>
+                            </td>
+                            <td style="padding: 15px; color: #e74c3c;">
+                                <strong>الصافي:</strong>
+                                <span id="netTotal" style="color: #e74c3c;">0.00</span>
+                            </td>
+                        </tr>
+
+
+                    </div>
+                </div>
+            </form>
+        </main>
+
+        <!-- Include libraries -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+        <!-- Tabulator -->
+        <link href="https://unpkg.com/tabulator-tables@6.2.1/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/tabulator-tables@6.2.1/dist/js/tabulator.min.js"></script>
+
+        <script id="server-items-data" type="application/json">
+            <%- JSON.stringify(items) %>
+        </script>
+
+        <script>
+            const serverItems = JSON.parse(document.getElementById('server-items-data').textContent || '[]');
+
+            let table;
+            let rowIdCounter = 0;
+
+            const formatCurrency = function (cell, formatterParams) {
+                return cell.getValue() ? parseFloat(cell.getValue()).toFixed(2) : "0.00";
+            };
+
+            const calculateGrandTotal = function () {
+                let total = 0;
+                const rows = table.getRows();
+                rows.forEach(row => {
+                    const data = row.getData();
+                    total += parseFloat(data.row_total) || 0;
+                });
+                document.getElementById('grandTotal').textContent = total.toFixed(2);
+                document.getElementById('netTotal').textContent = (total * (1 - document.getElementById('currant_discount_percent').textContent / 100)).toFixed(2);
+            };
+
+            const itemLookup = {};
+            serverItems.forEach(item => {
+                itemLookup[item.item_id] = item.item_id.toString() + " - " + (item.item_name || "");
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                table = new Tabulator("#itemsGrid", {
+                    data: [],
+                    layout: "fitColumns",
+                    textDirection: "rtl",
+                    columns: [
+                        {
+                            title: "كود الصنف", field: "item_code", editor: "list", editorParams: {
+                                values: itemLookup,
+                                autocomplete: true,
+                                listOnEmpty: true,
+                                clearable: true
+                            }, cellEdited: function (cell) {
+                                const code = cell.getValue();
+                                const item = serverItems.find(i => i.item_id.toString() === code);
+                                const data = cell.getRow().getData();
+                                if (item) {
+                                    data.item_id = item.item_id;
+                                    data.item_code = code;
+                                    data.item_name = item.item_name;
+                                    data.item_price = item.item_sell_price1 || item.item_price || 0;
+                                    data.item_qty = data.item_qty || 1;
+                                    data.row_total = data.item_qty * data.item_price;
+                                    cell.getRow().update(data);
+                                }
+                                calculateGrandTotal();
+                            }
+                        },
+                        { title: "الصنف", field: "item_name", headerSort: false },
+                        {
+                            title: "الكمية", field: "item_qty", editor: "number", editorParams: { min: 1 }, cellEdited: function (cell) {
+                                const data = cell.getRow().getData();
+                                const qty = parseFloat(data.item_qty) || 1;
+                                data.item_qty = qty;
+                                data.row_total = qty * (parseFloat(data.item_price) || 0);
+                                cell.getRow().update(data);
+                                calculateGrandTotal();
+                            }
+                        },
+                        {
+                            title: "السعر", field: "item_price", editor: "number", editorParams: { min: 0, step: 0.01 }, formatter: formatCurrency, cellEdited: function (cell) {
+                                const data = cell.getRow().getData();
+                                const price = parseFloat(data.item_price) || 0;
+                                data.item_price = price;
+                                data.row_total = (parseFloat(data.item_qty) || 1) * price;
+                                cell.getRow().update(data);
+                                calculateGrandTotal();
+                            }
+                        },
+                        { title: "الإجمالي", field: "row_total", formatter: formatCurrency, headerSort: false },
+                        {
+                            title: "حذف", formatter: "buttonCross", width: 80, align: "center", headerSort: false, cellClick: function (e, cell) {
+                                if (table.getRows().length > 1) {
+                                    cell.getRow().delete();
+                                    calculateGrandTotal();
+                                } else {
+                                    alert('يجب أن تحتوي الفاتورة على صنف واحد على الأقل.');
+                                }
+                            }
+                        }
+                    ],
+                });
+
+                // Add initial row
+                addNewRow();
+            });
+
+            function addNewRow() {
+                table.addRow({
+                    row_id: rowIdCounter++,
+                    item_code: "",
+                    item_id: "",
+                    item_name: "",
+                    item_qty: 1,
+                    item_price: 0,
+                    row_total: 0
+                });
+            }
+
+            function saveInvoice() {
+                const rowData = table.getData();
+                const validRows = rowData.filter(row => row.item_id);
+
+                if (validRows.length === 0) {
+                    alert('يجب إضافة صنف واحد على الأقل للفاتورة');
+                    return;
+                }
+
+                const form = document.getElementById('invoiceForm');
+
+                // Remove previous hidden inputs
+                form.querySelectorAll('.item-input').forEach(el => el.remove());
+
+                // Add hidden inputs for items
+                validRows.forEach((item, index) => {
+                    const fields = ['item_id', 'item_qty', 'item_price'];
+                    fields.forEach(key => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = `items[${index}][${key}]`;
+                        input.value = item[key];
+                        input.className = 'item-input';
+                        form.appendChild(input);
+                    });
+                });
+
+                form.submit();
+            }
+
+            // Initialize Select2 for customer dropdown
+            $(document).ready(function () {
+                $('.select2-customer').select2({
+                    placeholder: "-- اختر العميل --",
+                    allowClear: true,
+                    width: '100%',
+                    dir: "rtl"
+                });
+
+                // Link Sale Agent to Customer based on cf_n1
+                $('#cash_cv_id').on('change', function () {
+                    const selectedOption = $(this).find('option:selected');
+                    const agentId = selectedOption.data('agent-id');
+                    if (agentId) {
+                        $('#cash_agent_id').val(agentId).trigger('change');
+                    }
+                });
+
+                // Update discount percent when category combobox changes
+                $('#cash_cat_combobox').on('change', function () {
+                    const selectedOption = $(this).find('option:selected');
+                    const discountPercent = selectedOption.data('discount-percent') || 0;
+                    $('#currant_discount_percent').text(discountPercent);
+
+                    if (typeof calculateGrandTotal === 'function') {
+                        calculateGrandTotal();
+                    }
+                });
+
+                // Initialize with current selection
+                $('#cash_cat_combobox').trigger('change');
+            });
+        </script>
+
+        <%- include('../partials/footer') %>
