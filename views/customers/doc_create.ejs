@@ -64,6 +64,19 @@
                                                     <option value="حوافز بجوان" doc-cat="122">حوافز بجوان</option>
                                                 </select>
                                                 <% } %>
+                                                    <% if(title && title.includes("هدايا")) { %>
+                                                        <strong>نوع الهدية :</strong>
+                                                        <select class="form-control select-cash-cat-name"
+                                                            name="cash_cat_name" id="cash_cat_combobox" required
+                                                            style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                                                            <option value="هدايا بولي" doc-cat="30">هدايا بولي</option>
+                                                            <option value="هدايا صرف" doc-cat="59">هدايا صرف</option>
+                                                            <!-- <option value="حوافز قطعية" doc-cat="999">حوافز قطعية</option>
+                                                    <option value="حوافز رمادي" doc-cat="999">حوافز رمادي</option> -->
+                                                            <option value="هدايا بجوان" doc-cat="122">هدايا بجوان
+                                                            </option>
+                                                        </select>
+                                                        <% } %>
                                 </td>
 
                             </tr>
