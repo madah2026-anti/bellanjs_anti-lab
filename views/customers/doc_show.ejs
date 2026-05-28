@@ -54,7 +54,18 @@
                                     تاريخ السند : <%= invoice.cash_date ? new
                                         Date(invoice.cash_date).toISOString().split('T')[0] : 'غير مدخل' %>
                         </h3>
-
+                    </div>
+                    <div class="print-btn-container">
+                        <a href="/customers/doc_edit/<%= invoice.id %>"
+                            style="background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-pen"></i> تعديل
+                        </a>
+                    </div>
+                    <div class="print-btn-container">
+                        <a href="/customers/doc_delete/<%= invoice.id %>"
+                            style="background-color: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-trash"></i> حذف
+                        </a>
                     </div>
                     <div class="print-btn-container">
                         <button onclick="window.print()"

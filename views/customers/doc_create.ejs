@@ -71,8 +71,10 @@
                                                             style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc;">
                                                             <option value="هدايا بولي" doc-cat="30">هدايا بولي</option>
                                                             <option value="هدايا صرف" doc-cat="59">هدايا صرف</option>
-                                                            <!-- <option value="حوافز قطعية" doc-cat="999">حوافز قطعية</option>
-                                                    <option value="حوافز رمادي" doc-cat="999">حوافز رمادي</option> -->
+                                                            <option value="هدايا قطعية" doc-cat="999">هدايا قطعية
+                                                            </option>
+                                                            <option value="هدايا رمادي" doc-cat="999">هدايا رمادي
+                                                            </option>
                                                             <option value="هدايا بجوان" doc-cat="122">هدايا بجوان
                                                             </option>
                                                         </select>
@@ -160,28 +162,26 @@
 
                     <div id="itemsGrid" style="width: 100%;"></div>
 
-                    <div style="margin-top: 20px; text-align: left; font-size: 1.2em; font-weight: bold;">
+                    <div style="margin-top: 20px; text-align: center; font-size: 1.2em; font-weight: bold;">
+                        <table class="vendor-table" style="width: 100%; border-collapse: collapse;">
+                            <tr
+                                style="background: #f8f9fa; font-weight: bold; border-color: #e74c3c;border-width: 2;   ">
+                                <td style=" padding: 15px; color: #e74c3c;border-width: 1; ">
+                                    إجمالي الفاتورة: <span id="grandTotal" style="color: #e74c3c;">0.00</span>
 
-
-                        <tr style="background: #f8f9fa; font-weight: bold;">
-
-                            <td></td>
-                            <td></td>
-
-                            <td style=" padding: 15px; color: #e74c3c;border-width: 1; ">
-                                إجمالي الفاتورة: <span id="grandTotal" style="color: #e74c3c;">0.00</span>
-
-                            </td>
-                            <td style=" padding: 15px; color: #e74c3c;">
-                                <strong> الخصم : <span id="currant_discount_percent" style="color: #e74c3c;">0.00</span>
-                                    %)</strong>
-                            </td>
-                            <td style="padding: 15px; color: #e74c3c;">
-                                <strong>الصافي:</strong>
-                                <span id="netTotal" style="color: #e74c3c;">0.00</span>
-                            </td>
-                        </tr>
-
+                                </td>
+                                <td style=" padding: 15px; color: #e74c3c;">
+                                    <strong> الخصم (<span id="currant_discount_percent"
+                                            style="color: #e74c3c;">0.00</span>
+                                        %) : <span id="currant_discount_value"
+                                            style="color: #e74c3c;">0.00</span></strong>
+                                </td>
+                                <td style="padding: 15px; color: #e74c3c;">
+                                    <strong>الصافي:</strong>
+                                    <span id="netTotal" style="color: #e74c3c;">0.00</span>
+                                </td>
+                            </tr>
+                        </table>
 
                     </div>
                 </div>
@@ -204,7 +204,7 @@
         <script>
             const serverItems = JSON.parse(document.getElementById('server-items-data').textContent || '[]');
 
-            let table;
+            let grid1;
             let rowIdCounter = 0;
 
             const formatCurrency = function (cell, formatterParams) {
@@ -213,13 +213,17 @@
 
             const calculateGrandTotal = function () {
                 let total = 0;
-                const rows = table.getRows();
+                const rows = grid1.getRows();
                 rows.forEach(row => {
                     const data = row.getData();
                     total += parseFloat(data.row_total) || 0;
                 });
+                const cur_discount = document.getElementById('currant_discount_percent').textContent;
+                const cur_discount_value = (total * cur_discount / 100).toFixed(2);
+                const net_total = (total - cur_discount_value).toFixed(2);
                 document.getElementById('grandTotal').textContent = total.toFixed(2);
-                document.getElementById('netTotal').textContent = (total * (1 - document.getElementById('currant_discount_percent').textContent / 100)).toFixed(2);
+                document.getElementById('currant_discount_value').textContent = cur_discount_value;
+                document.getElementById('netTotal').textContent = net_total;
             };
 
             const itemLookup = {};
@@ -228,7 +232,7 @@
             });
 
             document.addEventListener('DOMContentLoaded', () => {
-                table = new Tabulator("#itemsGrid", {
+                grid1 = new Tabulator("#itemsGrid", {
                     data: [],
                     layout: "fitColumns",
                     textDirection: "rtl",
@@ -238,7 +242,8 @@
                                 values: itemLookup,
                                 autocomplete: true,
                                 listOnEmpty: true,
-                                clearable: true
+                                clearable: true,
+                                freetext: true
                             }, cellEdited: function (cell) {
                                 const code = cell.getValue();
                                 const item = serverItems.find(i => i.item_id.toString() === code);
@@ -247,15 +252,21 @@
                                     data.item_id = item.item_id;
                                     data.item_code = code;
                                     data.item_name = item.item_name;
+                                    data.item_unit = item.item_unit || "عدد";
                                     data.item_price = item.item_sell_price1 || item.item_price || 0;
                                     data.item_qty = data.item_qty || 1;
                                     data.row_total = data.item_qty * data.item_price;
                                     cell.getRow().update(data);
+
+                                    setTimeout(() => {
+                                        cell.getRow().getCell("item_qty").edit();
+                                    }, 10);
                                 }
                                 calculateGrandTotal();
                             }
                         },
                         { title: "الصنف", field: "item_name", headerSort: false },
+                        { title: "الوحدة", field: "item_unit", headerSort: false },
                         {
                             title: "الكمية", field: "item_qty", editor: "number", editorParams: { min: 1 }, cellEdited: function (cell) {
                                 const data = cell.getRow().getData();
@@ -264,6 +275,9 @@
                                 data.row_total = qty * (parseFloat(data.item_price) || 0);
                                 cell.getRow().update(data);
                                 calculateGrandTotal();
+                                setTimeout(() => {
+                                    cell.getRow().next().getCell("item_id").edit();
+                                }, 10);
                             }
                         },
                         {
@@ -279,7 +293,7 @@
                         { title: "الإجمالي", field: "row_total", formatter: formatCurrency, headerSort: false },
                         {
                             title: "حذف", formatter: "buttonCross", width: 80, align: "center", headerSort: false, cellClick: function (e, cell) {
-                                if (table.getRows().length > 1) {
+                                if (grid1.getRows().length > 1) {
                                     cell.getRow().delete();
                                     calculateGrandTotal();
                                 } else {
@@ -295,7 +309,7 @@
             });
 
             function addNewRow() {
-                table.addRow({
+                grid1.addRow({
                     row_id: rowIdCounter++,
                     item_code: "",
                     item_id: "",
@@ -307,7 +321,7 @@
             }
 
             function saveInvoice() {
-                const rowData = table.getData();
+                const rowData = grid1.getData();
                 const validRows = rowData.filter(row => row.item_id);
 
                 if (validRows.length === 0) {
